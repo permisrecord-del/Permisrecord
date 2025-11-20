@@ -38,28 +38,42 @@
     <!-- En-tête (Header) -->
     <header class="bg-gray-900 shadow-xl sticky top-0 z-10">
         <div class="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
-            <h1 class="text-3xl font-extrabold gold-text mb-2 sm:mb-0">
-                PERMIS RECORD
-            </h1>
-            <p class="text-sm text-gray-400">La route vers votre liberté</p>
+            
+            <div class="mb-2 sm:mb-0 text-center sm:text-left">
+                <h1 class="text-3xl font-extrabold gold-text">
+                    PERMIS RECORD
+                </h1>
+                <p class="text-sm text-gray-400">La route vers votre liberté</p>
+            </div>
+            
+            <!-- Numéro de téléphone ajouté ici -->
+            <a href="tel:+33767739780" class="flex items-center text-lg font-bold text-white hover:gold-text transition duration-200 mt-2 sm:mt-0 p-2 rounded-lg bg-gray-800 border gold-border border-opacity-30">
+                <!-- Icône de téléphone -->
+                <span class="gold-text mr-2 text-xl">&#9742;</span>
+                <span class="tracking-wider">07 67 73 97 80</span>
+            </a>
+            
         </div>
 
-        <!-- Navigation principale par onglets - Mis à jour pour 5 boutons (w-1/5) -->
+        <!-- Navigation principale par onglets - Mis à jour pour 6 boutons (w-1/6) -->
         <nav class="bg-gray-800 border-t border-b gold-border">
             <div class="max-w-4xl mx-auto flex justify-around text-center">
-                <button onclick="showSection('conduite')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="conduite">
+                <button onclick="showSection('conduite')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="conduite">
                     Conduite
                 </button>
-                <button onclick="showSection('inscription')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="inscription">
+                <button onclick="showSection('inscription')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="inscription">
                     Inscription
                 </button>
-                <button onclick="showSection('examen')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="examen">
+                <button onclick="showSection('tarifs')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="tarifs">
+                    Tarifs
+                </button>
+                <button onclick="showSection('examen')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="examen">
                     Examen
                 </button>
-                <button onclick="showSection('code')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="code">
+                <button onclick="showSection('code')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="code">
                     Code
                 </button>
-                <button onclick="showSection('legales')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="legales">
+                <button onclick="showSection('legales')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="legales">
                     Infos Légales
                 </button>
             </div>
@@ -85,8 +99,14 @@
         <section id="conduite" class="content-section">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Réservez vos Heures de Conduite</h2>
+                
+                <form onsubmit="handleFormSubmission(event, 'conduite')" class="space-y-4 mb-8">
+                    <!-- Email de l'élève (Ajouté pour identifier le réservateur) -->
+                    <div>
+                        <label for="lesson-email" class="block text-sm font-medium text-gray-400">Votre Email (obligatoire)</label>
+                        <input type="email" id="lesson-email" required placeholder="nom.prenom@example.com" class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                    </div>
 
-                <form onsubmit="handleFormSubmission(event, 'conduite')" class="space-y-4">
                     <!-- Type de leçon -->
                     <div>
                         <label for="lesson-type" class="block text-sm font-medium text-gray-400">Type de Leçon</label>
@@ -114,6 +134,15 @@
                         Réserver ma Leçon
                     </button>
                 </form>
+
+                <!-- Zone d'affichage des Réservations (l'alerte pour l'administrateur) -->
+                <div class="mt-10 pt-6 border-t border-gray-700">
+                    <h3 class="text-xl font-bold gold-text mb-4">Tableau de Bord des Réservations (Admin)</h3>
+                    <p id="reservation-loading" class="text-gray-500 text-sm">Chargement des réservations en cours...</p>
+                    <div id="reservation-list" class="space-y-3">
+                        <!-- Les réservations seront injectées ici par JavaScript -->
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -181,8 +210,98 @@
                 </form>
             </div>
         </section>
-        
-        <!-- SECTION 3: Réservation de date d'examen -->
+
+        <!-- NOUVELLE SECTION 3: Tarifs et Forfaits -->
+        <section id="tarifs" class="content-section hidden">
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Nos Tarifs et Forfaits Compétitifs</h2>
+                <p class="text-gray-400 mb-8">Choisissez la formule qui convient le mieux à vos objectifs et à votre budget. Tous nos forfaits incluent les frais de dossier et l'accès à la plateforme Code en ligne.</p>
+
+                <!-- Grille des Forfaits -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- Forfait 1: Code Seul -->
+                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-yellow-500 transition duration-300">
+                        <h3 class="text-xl font-bold gold-text mb-2">Code de la Route (ETG)</h3>
+                        <p class="text-3xl font-extrabold gold-text mb-4">199 €</p>
+                        <ul class="text-gray-300 space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> Accès illimité plateforme en ligne (6 mois)
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> Suivi de progression personnalisé
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> 1 Présentation à l'examen théorique
+                            </li>
+                            <li class="flex items-center text-gray-500">
+                                <span class="text-gray-600 mr-2">✗</span> Heures de conduite
+                            </li>
+                        </ul>
+                        <button onclick="showMessage('Achat Code', 'Vous serez redirigé vers le paiement pour le Forfait Code. Merci !')" class="w-full mt-6 py-3 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200">
+                            S'inscrire au Code
+                        </button>
+                    </div>
+
+                    <!-- Forfait 2: Permis B (20h) -->
+                    <div class="bg-gray-800 p-6 rounded-xl shadow-2xl border-4 gold-border ring-2 ring-yellow-500">
+                        <h3 class="text-xl font-bold gold-text mb-2">Permis B Standard (20h)</h3>
+                        <p class="text-3xl font-extrabold gold-text mb-4">1199 €</p>
+                        <ul class="text-gray-300 space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> Forfait Code Inclus (Accès 1 an)
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> **20 Heures de Conduite** obligatoires
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> Évaluation de départ
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> 1 Présentation à l'examen pratique
+                            </li>
+                        </ul>
+                        <button onclick="showSection('inscription')" class="w-full mt-6 py-3 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200">
+                            Je m'inscris au Permis B
+                        </button>
+                    </div>
+
+                    <!-- Forfait 3: Conduite Accompagnée -->
+                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-yellow-500 transition duration-300">
+                        <h3 class="text-xl font-bold gold-text mb-2">Conduite Accompagnée (AAC)</h3>
+                        <p class="text-3xl font-extrabold gold-text mb-4">1499 €</p>
+                        <ul class="text-gray-300 space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> Forfait Code Inclus (Accès 1 an)
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> **25 Heures de Conduite** initiales
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> Rendez-vous pédagogiques obligatoires
+                            </li>
+                            <li class="flex items-center">
+                                <span class="gold-text mr-2">✓</span> 1 Présentation à l'examen pratique
+                            </li>
+                        </ul>
+                        <button onclick="showSection('inscription')" class="w-full mt-6 py-3 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200">
+                            Je m'inscris à l'AAC
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Tarif Unitaire MODIFIÉ À 50 € -->
+                <div class="mt-10 p-4 bg-gray-900 border-t border-b border-gray-700 rounded-lg">
+                    <p class="text-lg font-semibold gold-text">Tarif de l'Heure de Conduite Unitaire :</p>
+                    <p class="text-xl font-extrabold text-gray-300 mt-1">50 € / heure</p>
+                    <p class="text-sm text-gray-500 mt-2">Ce tarif s'applique après l'épuisement des heures incluses dans un forfait.</p>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- SECTION 4: Réservation de date d'examen -->
         <section id="examen" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Inscription à l'Examen Pratique</h2>
@@ -224,7 +343,7 @@
             </div>
         </section>
 
-        <!-- SECTION 4: Révision du Code de la Route en Ligne -->
+        <!-- SECTION 5: Révision du Code de la Route en Ligne -->
         <section id="code" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Révision du Code de la Route en Ligne</h2>
@@ -280,7 +399,7 @@
             </div>
         </section>
         
-        <!-- SECTION 5: Informations Légales -->
+        <!-- SECTION 6: Informations Légales -->
         <section id="legales" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Informations Légales et Conditions Générales</h2>
@@ -298,7 +417,7 @@
                             <li>Siège Social : 10 Rue de la Liberté, 75001 Paris, France</li>
                             <li>Directeur de la publication : M. Alex Dupond</li>
                             <li>Hébergeur : Fictif Hosting S.A.</li>
-                            <li>Téléphone : 07 67 73 97 80</li>
+                            <li>Téléphone : <a href="tel:+33767739780" class="gold-text hover:underline">07 67 73 97 80</a></li>
                             <li>Contact (Email) : permisrecord@gmail.com</li>
                         </ul>
                     </article>
@@ -340,15 +459,131 @@
         </p>
     </footer>
 
-    <!-- JavaScript pour la gestion des onglets et des formulaires -->
-    <script>
-        // NOTE IMPORTANTE SUR L'ENVOI D'EMAILS EN PRODUCTION :
-        // Le code ci-dessous simule le succès d'une opération et confirme à l'utilisateur qu'un email a été envoyé.
-        // Dans une application réelle, pour envoyer des emails (backend), vous devez remplacer cette simulation
-        // par un appel asynchrone sécurisé (fetch) vers un service serveur dédié (API Gateway, Firebase Functions, etc.)
-        // qui utilise une librairie d'envoi d'emails (ex: Nodemailer, SendGrid, Mailgun).
+    <!-- JavaScript pour la gestion des onglets, des formulaires et de Firebase -->
+    <script type="module">
+        // Importations Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, addDoc, onSnapshot, collection, query, where, serverTimestamp, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Variables globales pour Firebase et l'utilisateur
+        let db;
+        let auth;
+        let userId = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Référence à la collection (publique pour que l'admin puisse la consulter)
+        const RESERVATIONS_COLLECTION_PATH = `/artifacts/${appId}/public/data/reservations`;
+
+        /**
+         * Initialise Firebase et authentifie l'utilisateur.
+         */
+        async function initializeFirebase() {
+            try {
+                // Configuration des logs de Firebase pour le débogage
+                setLogLevel('debug');
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Assurer la persistance de session (facultatif mais bonne pratique)
+                await setPersistence(auth, browserSessionPersistence);
+
+                // Authentification
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Attendre l'état d'authentification pour obtenir l'ID utilisateur
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase Auth Ready. User ID:", userId);
+                        // Lancer l'écoute des données une fois que l'auth est prête
+                        setupReservationsListener(); 
+                    } else {
+                        userId = crypto.randomUUID(); // Utiliser un ID temporaire si anonyme
+                        console.warn("Signed in anonymously. Using generated ID:", userId);
+                        setupReservationsListener();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erreur lors de l'initialisation de Firebase:", error);
+                showMessage("Erreur Système", "Impossible de se connecter à la base de données. Veuillez réessayer plus tard.");
+            }
+        }
         
-        // La fonction est marquée 'async' pour simuler le délai réseau réel.
+        /**
+         * Écoute en temps réel les nouvelles réservations (l'alerte admin).
+         */
+        function setupReservationsListener() {
+            if (!db || !userId) {
+                console.warn("Database or User ID not ready. Listener skipped.");
+                return;
+            }
+
+            const q = collection(db, RESERVATIONS_COLLECTION_PATH);
+            const listElement = document.getElementById('reservation-list');
+            const loadingElement = document.getElementById('reservation-loading');
+            
+            // onSnapshot écoute les changements en temps réel
+            onSnapshot(q, (snapshot) => {
+                const reservations = [];
+                snapshot.forEach((doc) => {
+                    // Récupérer les données et l'ID du document
+                    reservations.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Trier les réservations par date de création (la plus récente d'abord)
+                reservations.sort((a, b) => b.createdAt.toDate() - a.createdAt.toDate());
+
+                // Affichage
+                loadingElement.classList.add('hidden');
+                listElement.innerHTML = ''; // Nettoyer la liste
+                
+                if (reservations.length === 0) {
+                    listElement.innerHTML = '<p class="text-gray-500">Aucune réservation en attente.</p>';
+                } else {
+                    reservations.forEach(reservation => {
+                        const lessonDate = new Date(reservation.date + 'T' + reservation.time).toLocaleDateString('fr-FR', { 
+                            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                        });
+                        
+                        const item = document.createElement('div');
+                        item.className = 'p-3 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition duration-200';
+                        item.innerHTML = `
+                            <p class="text-sm font-bold gold-text">Nouvelle Réservation (#${reservation.id.substring(0, 4)})</p>
+                            <p class="text-gray-300 mt-1">
+                                <span class="font-semibold">${reservation.email}</span> a réservé une leçon de type <span class="font-semibold">${reservation.type}</span>.
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Date & Heure : ${lessonDate}
+                            </p>
+                        `;
+                        listElement.appendChild(item);
+                    });
+                }
+                
+                // Alerte visuelle : Mettre en évidence la section Conduite si de nouvelles réservations arrivent (simple notification)
+                const conduiteTab = document.querySelector(`.tab-button[data-target="conduite"]`);
+                if (reservations.length > 0 && !conduiteTab.classList.contains('gold-text')) {
+                     // Petite animation d'alerte pour l'admin
+                     conduiteTab.style.boxShadow = '0 0 10px #FFD700';
+                     setTimeout(() => conduiteTab.style.boxShadow = 'none', 1000);
+                }
+
+            }, (error) => {
+                console.error("Erreur d'écoute Firestore:", error);
+                listElement.innerHTML = '<p class="text-red-500">Erreur de connexion aux réservations.</p>';
+            });
+        }
+
 
         // Fonction pour afficher une section spécifique et mettre à jour le style des boutons
         function showSection(targetId) {
@@ -381,7 +616,7 @@
         // Fonction pour afficher le message modal (remplace alert/confirm)
         function showMessage(title, content) {
             document.getElementById('message-title').textContent = title;
-            document.getElementById('message-content').textContent = content;
+            document.getElementById('message-content').innerHTML = content; // Utiliser innerHTML pour le HTML dans le message
             document.getElementById('message-box').classList.remove('hidden');
             document.getElementById('message-box').classList.add('flex');
         }
@@ -392,49 +627,76 @@
             document.getElementById('message-box').classList.remove('flex');
         }
 
-        // Gestionnaire de soumission de formulaire SIMULÉ avec confirmation par email
+        // Gestionnaire de soumission de formulaire
         async function handleFormSubmission(event, formType) {
             event.preventDefault(); // Empêche l'envoi réel du formulaire
 
-            // 1. Simuler l'envoi des données au serveur (et l'attente réseau)
-            // Dans une vraie application, c'est ici qu'on ferait l'appel `fetch('/api/send-email', { method: 'POST', body: formData })`
-            
-            // Simuler une attente réseau de 800ms
-            await new Promise(resolve => setTimeout(resolve, 800)); 
+            if (!db) {
+                showMessage("Erreur de Connexion", "La base de données n'est pas initialisée. Veuillez rafraîchir la page.");
+                return;
+            }
 
             let title = "Demande Enregistrée";
-            let emailConfirmationMsg = "Un email de confirmation vient de vous être envoyé. Vérifiez votre boîte de réception (et les spams) !";
-            let content = `Votre demande a bien été reçue par l'équipe Permis Record. ${emailConfirmationMsg}`;
+            let content = "Votre demande a bien été reçue par l'équipe Permis Record.";
 
-            // 2. Personnalisation du message après "envoi" simulé de l'email
+            // Logique de soumission pour les Réservations de Conduite (Sauvegarde dans Firestore)
             if (formType === 'conduite') {
+                const email = document.getElementById('lesson-email').value;
                 const date = document.getElementById('lesson-date').value;
                 const time = document.getElementById('lesson-time').value;
-                const lessonType = document.getElementById('lesson-type').options[document.getElementById('lesson-type').selectedIndex].text;
+                const typeElement = document.getElementById('lesson-type');
+                const lessonType = typeElement.options[typeElement.selectedIndex].text;
+                
+                try {
+                    // Créer le document de réservation
+                    const newReservation = {
+                        email: email,
+                        date: date,
+                        time: time,
+                        type: lessonType,
+                        status: 'En attente',
+                        reservedBy: userId,
+                        createdAt: serverTimestamp() // Marque la date de création sur le serveur
+                    };
 
-                title = "Réservation de Leçon Confirmée";
-                content = `Votre réservation pour une **${lessonType}** le **${date}** à **${time}** est en attente de validation. ${emailConfirmationMsg}`;
+                    // Ajouter le document à la collection
+                    await addDoc(collection(db, RESERVATIONS_COLLECTION_PATH), newReservation);
+
+                    title = "Réservation Confirmée (Sauvegardée)";
+                    content = `Votre réservation pour une <strong>${lessonType}</strong> le <strong>${date}</strong> à <strong>${time}</strong> a été sauvegardée. Notre équipe la traite et vous enverra un email de confirmation (simulé) sous peu.`;
+
+                    // L'admin verra cette nouvelle réservation apparaître immédiatement dans le tableau de bord grâce à onSnapshot.
+
+                } catch (e) {
+                    console.error("Erreur d'ajout de document de réservation : ", e);
+                    title = "Erreur de Réservation";
+                    content = `Une erreur est survenue lors de la sauvegarde de votre réservation. Veuillez vérifier votre connexion. ${e.message}`;
+                }
+                
             } else if (formType === 'examen') {
+                // Logique pour Examen (Simulation, car pas critique pour l'alerte)
                 const examType = document.getElementById('exam-type').value;
                 const date1 = document.getElementById('exam-date-1').value;
                 
-                title = "Demande d'Examen Reçue";
-                content = `Votre demande pour le permis ${examType} pour le **${date1}** a été enregistrée. Nous la traitons et vous enverrons un email dès que la date est confirmée officiellement. ${emailConfirmationMsg}`;
+                title = "Demande d'Examen Reçue (Simulée)";
+                content = `Votre demande pour le permis ${examType} pour le <strong>${date1}</strong> a été enregistrée. Nous la traitons et vous enverrons un email dès que la date est confirmée officiellement (Simulation).`;
             } else if (formType === 'inscription') {
-                title = "Pré-inscription Réussie";
-                content = `Félicitations ! Votre dossier a été soumis. Veuillez consulter l'email que nous venons de vous envoyer pour la liste des documents à fournir et la finalisation de votre inscription.`;
+                // Logique pour Inscription (Simulation, car pas critique pour l'alerte)
+                title = "Pré-inscription Réussie (Simulée)";
+                content = `Félicitations ! Votre dossier a été soumis (Simulation). Veuillez consulter l'email que nous venons de vous envoyer pour la liste des documents à fournir et la finalisation de votre inscription.`;
             }
 
-            // Nettoyer les champs du formulaire après l'envoi simulé
+            // Nettoyer les champs du formulaire après l'envoi
             event.target.reset();
 
             // Afficher la confirmation
             showMessage(title, content);
         }
 
-        // Initialisation : afficher la première section au chargement
+        // Initialisation : afficher la section Tarifs par défaut et initialiser Firebase
         document.addEventListener('DOMContentLoaded', () => {
-            showSection('conduite');
+            showSection('conduite'); // Afficher la section Conduite pour voir l'effet du tableau de bord
+            initializeFirebase();
         });
     </script>
 
