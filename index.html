@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permis Record | Votre auto-école en ligne</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuration de la police Inter -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Fond noir */
+            color: #E2E8F0; /* Texte gris clair par défaut */
+        }
+        .gold-text {
+            color: #FFD700; /* Couleur Or */
+        }
+        .gold-border {
+            border-color: #FFD700; /* Couleur Or */
+        }
+        .gold-bg {
+            background-color: #FFD700; /* Couleur Or */
+        }
+        /* Assure que le body prend toute la hauteur et que le footer reste en bas */
+        .min-h-screen {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- En-tête (Header) -->
+    <header class="bg-gray-900 shadow-xl sticky top-0 z-10">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-3xl font-extrabold gold-text mb-2 sm:mb-0">
+                PERMIS RECORD
+            </h1>
+            <p class="text-sm text-gray-400">La route vers votre liberté</p>
+        </div>
+
+        <!-- Navigation principale par onglets - Mis à jour pour 5 boutons (w-1/5) -->
+        <nav class="bg-gray-800 border-t border-b gold-border">
+            <div class="max-w-4xl mx-auto flex justify-around text-center">
+                <button onclick="showSection('conduite')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="conduite">
+                    Conduite
+                </button>
+                <button onclick="showSection('inscription')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="inscription">
+                    Inscription
+                </button>
+                <button onclick="showSection('examen')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="examen">
+                    Examen
+                </button>
+                <button onclick="showSection('code')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="code">
+                    Code
+                </button>
+                <button onclick="showSection('legales')" class="tab-button w-1/5 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="legales">
+                    Infos Légales
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="max-w-4xl mx-auto p-4 sm:p-8">
+
+        <!-- Message de confirmation/erreur (Modal Mockup) -->
+        <div id="message-box" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-sm border-t-4 gold-border">
+                <h3 id="message-title" class="text-xl font-bold gold-text mb-3">Confirmation</h3>
+                <p id="message-content" class="text-gray-300 mb-5">Votre demande a été enregistrée avec succès.</p>
+                <button onclick="hideMessage()" class="w-full py-2 px-4 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200">
+                    Fermer
+                </button>
+            </div>
+        </div>
+
+
+        <!-- SECTION 1: Réservation d'heures de conduite -->
+        <section id="conduite" class="content-section">
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Réservez vos Heures de Conduite</h2>
+
+                <form onsubmit="handleFormSubmission(event, 'conduite')" class="space-y-4">
+                    <!-- Type de leçon -->
+                    <div>
+                        <label for="lesson-type" class="block text-sm font-medium text-gray-400">Type de Leçon</label>
+                        <select id="lesson-type" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                            <option value="">Sélectionnez un type</option>
+                            <option value="initiale">Leçon initiale (2h)</option>
+                            <option value="perfectionnement">Perfectionnement (1h)</option>
+                            <option value="conduite_accompagnee">Conduite Accompagnée (2h)</option>
+                        </select>
+                    </div>
+
+                    <!-- Date souhaitée -->
+                    <div>
+                        <label for="lesson-date" class="block text-sm font-medium text-gray-400">Date Souhaitée</label>
+                        <input type="date" id="lesson-date" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                    </div>
+
+                    <!-- Heure souhaitée -->
+                    <div>
+                        <label for="lesson-time" class="block text-sm font-medium text-gray-400">Heure de Début</label>
+                        <input type="time" id="lesson-time" required min="08:00" max="18:00" class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
+                        Réserver ma Leçon
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Inscription de l'élève -->
+        <section id="inscription" class="content-section hidden">
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Inscription à l'Auto-École</h2>
+                <p class="text-gray-400 mb-6">Veuillez remplir ce formulaire pour créer votre dossier élève et commencer votre formation.</p>
+
+                <form onsubmit="handleFormSubmission(event, 'inscription')" class="space-y-4">
+                    <!-- Section Identité -->
+                    <h3 class="text-lg font-semibold gold-text pt-2">Informations Personnelles</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="reg-lastname" class="block text-sm font-medium text-gray-400">Nom</label>
+                            <input type="text" id="reg-lastname" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                        </div>
+                        <div>
+                            <label for="reg-firstname" class="block text-sm font-medium text-gray-400">Prénom</label>
+                            <input type="text" id="reg-firstname" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="reg-dob" class="block text-sm font-medium text-gray-400">Date de Naissance</label>
+                        <input type="date" id="reg-dob" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                    </div>
+
+                    <!-- Section Contact -->
+                    <h3 class="text-lg font-semibold gold-text pt-4">Coordonnées</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="reg-email" class="block text-sm font-medium text-gray-400">Email</label>
+                            <input type="email" id="reg-email" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                        </div>
+                        <div>
+                            <label for="reg-phone" class="block text-sm font-medium text-gray-400">Téléphone</label>
+                            <input type="tel" id="reg-phone" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                        </div>
+                    </div>
+                    
+                    <!-- Section Formation -->
+                    <h3 class="text-lg font-semibold gold-text pt-4">Choix de la Formation</h3>
+                    <div>
+                        <label for="reg-permit" class="block text-sm font-medium text-gray-400">Permis Souhaité</label>
+                        <select id="reg-permit" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                            <option value="">Sélectionnez un permis</option>
+                            <option value="B">Permis B (Voiture)</option>
+                            <option value="A2">Permis A2 (Moto)</option>
+                            <option value="AAC">Conduite Accompagnée (AAC)</option>
+                            <option value="Code">Uniquement Code de la Route</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Consentement -->
+                    <div class="flex items-start pt-4">
+                        <input id="reg-cgv" type="checkbox" required class="h-4 w-4 rounded gold-bg border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                        <label for="reg-cgv" class="ml-3 text-sm text-gray-400">
+                            J'accepte les <a href="#" onclick="showSection('legales'); return false;" class="gold-text hover:underline">Conditions Générales de Vente</a> et la Politique de Confidentialité.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
+                        Soumettre mon Dossier d'Inscription
+                    </button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- SECTION 3: Réservation de date d'examen -->
+        <section id="examen" class="content-section hidden">
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Inscription à l'Examen Pratique</h2>
+
+                <form onsubmit="handleFormSubmission(event, 'examen')" class="space-y-4">
+                    <!-- Permis concerné -->
+                    <div>
+                        <label for="exam-type" class="block text-sm font-medium text-gray-400">Permis Concerné</label>
+                        <select id="exam-type" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                            <option value="">Sélectionnez le type de permis</option>
+                            <option value="B">Permis B (Voiture)</option>
+                            <option value="A2">Permis A2 (Moto)</option>
+                            <option value="BE">Permis BE (Remorque)</option>
+                        </select>
+                    </div>
+
+                    <!-- 1ère date souhaitée -->
+                    <div>
+                        <label for="exam-date-1" class="block text-sm font-medium text-gray-400">1ère Date Préférée</label>
+                        <input type="date" id="exam-date-1" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                    </div>
+
+                    <!-- 2ème date souhaitée -->
+                    <div>
+                        <label for="exam-date-2" class="block text-sm font-medium text-gray-400">2ème Date Préférée (Optionnel)</label>
+                        <input type="date" id="exam-date-2" class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                    </div>
+
+                    <!-- Message -->
+                    <div>
+                        <label for="exam-message" class="block text-sm font-medium text-gray-400">Commentaires (ex: créneau horaire préféré)</label>
+                        <textarea id="exam-message" rows="3" class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
+                        Soumettre ma Demande
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Révision du Code de la Route en Ligne -->
+        <section id="code" class="content-section hidden">
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Révision du Code de la Route en Ligne</h2>
+                <p class="text-gray-400 mb-6">Préparez-vous à l'examen du Code de la Route avec nos séries de tests thématiques.</p>
+
+                <!-- Zone de progression (Mock-up) -->
+                <div class="mb-8 p-4 bg-gray-800 rounded-lg">
+                    <h3 class="text-xl font-semibold gold-text mb-2">Votre Progression</h3>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4">
+                        <div class="gold-bg h-2.5 rounded-full" style="width: 65%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400">65% des thèmes couverts. Bonne route !</p>
+                </div>
+
+                <!-- Grille des séries de tests -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <!-- Carte de série de test -->
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition duration-300">
+                        <h4 class="text-lg font-bold gold-text">Série Thématique 1: Signalisation</h4>
+                        <p class="text-gray-400 text-sm mb-3">Panneaux de danger, d'interdiction et d'obligation.</p>
+                        <button onclick="showMessage('Code Lancé', 'Vous avez démarré la Série 1. Bon courage !')" class="w-full py-2 px-4 rounded-lg gold-bg text-gray-900 font-bold text-sm hover:bg-yellow-400 transition duration-200">
+                            Commencer le Test (40 questions)
+                        </button>
+                    </div>
+
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition duration-300">
+                        <h4 class="text-lg font-bold gold-text">Série Thématique 2: Priorités et Intersections</h4>
+                        <p class="text-gray-400 text-sm mb-3">Règles de priorité, carrefours et ronds-points.</p>
+                        <button onclick="showMessage('Code Lancé', 'Vous avez démarré la Série 2. Bonne chance !')" class="w-full py-2 px-4 rounded-lg gold-bg text-gray-900 font-bold text-sm hover:bg-yellow-400 transition duration-200">
+                            Commencer le Test (40 questions)
+                        </button>
+                    </div>
+
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition duration-300">
+                        <h4 class="text-lg font-bold gold-text">Série Thématique 3: Vitesse et Distances</h4>
+                        <p class="text-gray-400 text-sm mb-3">Limitations de vitesse et distances de sécurité.</p>
+                        <button onclick="showMessage('Code Lancé', 'Vous avez démarré la Série 3. Concentrez-vous !')" class="w-full py-2 px-4 rounded-lg gold-bg text-gray-900 font-bold text-sm hover:bg-yellow-500/50">
+                            Commencer le Test (40 questions)
+                        </button>
+                    </div>
+
+                    <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 opacity-60">
+                        <h4 class="text-lg font-bold gold-text">Série Thématique 4: Secourisme</h4>
+                        <p class="text-gray-400 text-sm mb-3">Thème à venir !</p>
+                        <button disabled class="w-full py-2 px-4 rounded-lg bg-gray-600 text-gray-400 font-bold text-sm cursor-not-allowed">
+                            Indisponible
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+        
+        <!-- SECTION 5: Informations Légales -->
+        <section id="legales" class="content-section hidden">
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Informations Légales et Conditions Générales</h2>
+
+                <div class="space-y-8">
+                    <!-- Mentions Légales (Mock-up) -->
+                    <article>
+                        <h3 class="text-xl font-semibold gold-text mb-3 border-b border-gray-700 pb-1">1. Mentions Légales</h3>
+                        <p class="text-gray-400 mb-2">
+                            Ce site est édité par **PERMIS RECORD SAS** (Société par Actions Simplifiée).
+                        </p>
+                        <ul class="list-disc list-inside ml-4 mt-2 text-gray-500 text-sm space-y-1">
+                            <li>Raison Sociale : PERMIS RECORD SAS</li>
+                            <li>N° SIRET : 123 456 789 00010 (Fictif)</li>
+                            <li>Siège Social : 10 Rue de la Liberté, 75001 Paris, France</li>
+                            <li>Directeur de la publication : M. Alex Dupond</li>
+                            <li>Hébergeur : Fictif Hosting S.A.</li>
+                            <li>Téléphone : 07 67 73 97 80</li>
+                            <li>Contact (Email) : permisrecord@gmail.com</li>
+                        </ul>
+                    </article>
+
+                    <!-- Conditions Générales de Vente (Mock-up) -->
+                    <article>
+                        <h3 class="text-xl font-semibold gold-text mb-3 border-b border-gray-700 pb-1">2. Conditions Générales de Vente (CGV)</h3>
+                        <p class="text-gray-400 mb-2">
+                            Toute réservation de service est soumise aux Conditions Générales de Vente. Extraits clés :
+                        </p>
+                        <ul class="list-disc list-inside ml-4 mt-2 text-gray-500 text-sm space-y-1">
+                            <li>**Annulation des Leçons :** Toute annulation doit être notifiée 48 heures à l'avance, faute de quoi la leçon est due.</li>
+                            <li>**Validité des Formations :** Les forfaits (Code ou Conduite) sont valables 12 mois à compter de la date d'achat.</li>
+                            <li>**Frais d'Examen :** La présentation à l'examen pratique est conditionnée au niveau de l'élève, décidé par l'équipe pédagogique.</li>
+                        </ul>
+                    </article>
+
+                    <!-- Politique de Confidentialité (Mock-up) -->
+                    <article>
+                        <h3 class="text-xl font-semibold gold-text mb-3 border-b border-gray-700 pb-1">3. Politique de Confidentialité</h3>
+                        <p class="text-gray-400">
+                            Nous collectons vos données (nom, email, historique de réservation) uniquement pour la gestion de votre dossier et le suivi pédagogique. Elles sont stockées en France et protégées conformément au Règlement Général sur la Protection des Données (RGPD).
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Pied de page (Footer) -->
+    <footer class="bg-gray-900 mt-8 py-4 px-4 text-center text-xs text-gray-600 border-t border-gray-800">
+        <p>&copy; 2025 PERMIS RECORD SAS. Tous droits réservés.</p>
+        <p class="mt-1">
+            <!-- Les liens dans le footer pointent vers la section Légales -->
+            <a href="#" onclick="showSection('legales'); return false;" class="hover:text-gold-text mx-2 text-gray-500 hover:text-yellow-500 transition duration-200">Mentions Légales</a> |
+            <a href="#" onclick="showSection('legales'); return false;" class="hover:text-gold-text mx-2 text-gray-500 hover:text-yellow-500 transition duration-200">CGV</a> |
+            <a href="#" onclick="showSection('legales'); return false;" class="hover:text-gold-text mx-2 text-gray-500 hover:text-yellow-500 transition duration-200">Confidentialité</a>
+        </p>
+    </footer>
+
+    <!-- JavaScript pour la gestion des onglets et des formulaires -->
+    <script>
+        // NOTE IMPORTANTE SUR L'ENVOI D'EMAILS EN PRODUCTION :
+        // Le code ci-dessous simule le succès d'une opération et confirme à l'utilisateur qu'un email a été envoyé.
+        // Dans une application réelle, pour envoyer des emails (backend), vous devez remplacer cette simulation
+        // par un appel asynchrone sécurisé (fetch) vers un service serveur dédié (API Gateway, Firebase Functions, etc.)
+        // qui utilise une librairie d'envoi d'emails (ex: Nodemailer, SendGrid, Mailgun).
+        
+        // La fonction est marquée 'async' pour simuler le délai réseau réel.
+
+        // Fonction pour afficher une section spécifique et mettre à jour le style des boutons
+        function showSection(targetId) {
+            // Cacher toutes les sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            // Réinitialiser les styles de tous les boutons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                // S'assurer que les classes de mise en évidence sont retirées
+                button.classList.remove('gold-text', 'bg-gray-700', 'border-b-4', 'gold-border');
+                // Réappliquer les styles de base pour un état non sélectionné
+                button.classList.add('text-gray-400');
+            });
+
+            // Afficher la section cible
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Mettre en évidence le bouton actif
+            const activeTab = document.querySelector(`.tab-button[data-target="${targetId}"]`);
+            if (activeTab) {
+                activeTab.classList.remove('text-gray-400');
+                activeTab.classList.add('gold-text', 'bg-gray-700', 'border-b-4', 'gold-border');
+            }
+        }
+
+        // Fonction pour afficher le message modal (remplace alert/confirm)
+        function showMessage(title, content) {
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-content').textContent = content;
+            document.getElementById('message-box').classList.remove('hidden');
+            document.getElementById('message-box').classList.add('flex');
+        }
+
+        // Fonction pour masquer le message modal
+        function hideMessage() {
+            document.getElementById('message-box').classList.add('hidden');
+            document.getElementById('message-box').classList.remove('flex');
+        }
+
+        // Gestionnaire de soumission de formulaire SIMULÉ avec confirmation par email
+        async function handleFormSubmission(event, formType) {
+            event.preventDefault(); // Empêche l'envoi réel du formulaire
+
+            // 1. Simuler l'envoi des données au serveur (et l'attente réseau)
+            // Dans une vraie application, c'est ici qu'on ferait l'appel `fetch('/api/send-email', { method: 'POST', body: formData })`
+            
+            // Simuler une attente réseau de 800ms
+            await new Promise(resolve => setTimeout(resolve, 800)); 
+
+            let title = "Demande Enregistrée";
+            let emailConfirmationMsg = "Un email de confirmation vient de vous être envoyé. Vérifiez votre boîte de réception (et les spams) !";
+            let content = `Votre demande a bien été reçue par l'équipe Permis Record. ${emailConfirmationMsg}`;
+
+            // 2. Personnalisation du message après "envoi" simulé de l'email
+            if (formType === 'conduite') {
+                const date = document.getElementById('lesson-date').value;
+                const time = document.getElementById('lesson-time').value;
+                const lessonType = document.getElementById('lesson-type').options[document.getElementById('lesson-type').selectedIndex].text;
+
+                title = "Réservation de Leçon Confirmée";
+                content = `Votre réservation pour une **${lessonType}** le **${date}** à **${time}** est en attente de validation. ${emailConfirmationMsg}`;
+            } else if (formType === 'examen') {
+                const examType = document.getElementById('exam-type').value;
+                const date1 = document.getElementById('exam-date-1').value;
+                
+                title = "Demande d'Examen Reçue";
+                content = `Votre demande pour le permis ${examType} pour le **${date1}** a été enregistrée. Nous la traitons et vous enverrons un email dès que la date est confirmée officiellement. ${emailConfirmationMsg}`;
+            } else if (formType === 'inscription') {
+                title = "Pré-inscription Réussie";
+                content = `Félicitations ! Votre dossier a été soumis. Veuillez consulter l'email que nous venons de vous envoyer pour la liste des documents à fournir et la finalisation de votre inscription.`;
+            }
+
+            // Nettoyer les champs du formulaire après l'envoi simulé
+            event.target.reset();
+
+            // Afficher la confirmation
+            showMessage(title, content);
+        }
+
+        // Initialisation : afficher la première section au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('conduite');
+        });
+    </script>
+
+</body>
+</html>
+
