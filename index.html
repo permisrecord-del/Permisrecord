@@ -11,7 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #on 000000; /* Fond noir */
+            background-color: #000000; /* Fond noir */
             color: #E2E8F0; /* Texte gris clair par défaut */
         }
         .gold-text {
@@ -523,8 +523,11 @@
          * Écoute en temps réel les nouvelles réservations (l'alerte admin).
          */
         function setupReservationsListener() {
+            // VERIFICATION AJOUTÉE POUR EVITER LE CRASH SI DB OU USER ID MANQUENT
             if (!db || !userId) {
                 console.warn("Database or User ID not ready. Listener skipped.");
+                // Afficher un message d'erreur ou de chargement persistant si nécessaire
+                document.getElementById('reservation-loading').textContent = "En attente de connexion à la base de données...";
                 return;
             }
 
@@ -540,8 +543,13 @@
                     reservations.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Trier les réservations par date de création (la plus récente d'abord)
-                reservations.sort((a, b) => b.createdAt.toDate() - a.createdAt.toDate());
+                // FIX: Gestion robuste du tri pour éviter le crash si createdAt n'est pas encore un Timestamp
+                reservations.sort((a, b) => {
+                    // Utilise 0 si le timestamp n'est pas encore disponible (pour le placer en bas du tri)
+                    const timeA = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
+                    const timeB = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
+                    return timeB - timeA; // Tri descendant (plus récent en premier)
+                });
 
                 // Affichage
                 loadingElement.classList.add('hidden');
@@ -551,16 +559,21 @@
                     listElement.innerHTML = '<p class="text-gray-500">Aucune réservation en attente.</p>';
                 } else {
                     reservations.forEach(reservation => {
-                        const lessonDate = new Date(reservation.date + 'T' + reservation.time).toLocaleDateString('fr-FR', { 
-                            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-                        });
+                        // Utilise un fallback si la date/heure n'est pas encore présente
+                        const date = reservation.date || 'N/A';
+                        const time = reservation.time || 'N/A';
+                        const lessonDate = date !== 'N/A' && time !== 'N/A' 
+                            ? new Date(date + 'T' + time).toLocaleDateString('fr-FR', { 
+                                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                            })
+                            : 'Date Indisponible';
                         
                         const item = document.createElement('div');
                         item.className = 'p-3 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition duration-200';
                         item.innerHTML = `
                             <p class="text-sm font-bold gold-text">Nouvelle Réservation (#${reservation.id.substring(0, 4)})</p>
                             <p class="text-gray-300 mt-1">
-                                <span class="font-semibold">${reservation.email}</span> a réservé une leçon de type <span class="font-semibold">${reservation.type}</span>.
+                                <span class="font-semibold">${reservation.email || 'Email non spécifié'}</span> a réservé une leçon de type <span class="font-semibold">${reservation.type || 'Inconnu'}</span>.
                             </p>
                             <p class="text-xs text-gray-500 mt-1">
                                 Date & Heure : ${lessonDate}
@@ -572,7 +585,7 @@
                 
                 // Alerte visuelle : Mettre en évidence la section Conduite si de nouvelles réservations arrivent (simple notification)
                 const conduiteTab = document.querySelector(`.tab-button[data-target="conduite"]`);
-                if (reservations.length > 0 && !conduiteTab.classList.contains('gold-text')) {
+                if (reservations.length > 0 && conduiteTab) {
                      // Petite animation d'alerte pour l'admin
                      conduiteTab.style.boxShadow = '0 0 10px #FFD700';
                      setTimeout(() => conduiteTab.style.boxShadow = 'none', 1000);
@@ -581,6 +594,8 @@
             }, (error) => {
                 console.error("Erreur d'écoute Firestore:", error);
                 listElement.innerHTML = '<p class="text-red-500">Erreur de connexion aux réservations.</p>';
+                loadingElement.classList.remove('hidden');
+                loadingElement.textContent = "Erreur: Vérifiez la console pour les détails de l'erreur Firebase.";
             });
         }
 
@@ -631,8 +646,9 @@
         async function handleFormSubmission(event, formType) {
             event.preventDefault(); // Empêche l'envoi réel du formulaire
 
+            // VERIFICATION AJOUTÉE
             if (!db) {
-                showMessage("Erreur de Connexion", "La base de données n'est pas initialisée. Veuillez rafraîchir la page.");
+                showMessage("Erreur de Connexion", "La base de données n'est pas initialisée. Veuillez rafraîchir la page ou vérifier l'initialisation de Firebase.");
                 return;
             }
 
@@ -665,12 +681,10 @@
                     title = "Réservation Confirmée (Sauvegardée)";
                     content = `Votre réservation pour une <strong>${lessonType}</strong> le <strong>${date}</strong> à <strong>${time}</strong> a été sauvegardée. Notre équipe la traite et vous enverra un email de confirmation (simulé) sous peu.`;
 
-                    // L'admin verra cette nouvelle réservation apparaître immédiatement dans le tableau de bord grâce à onSnapshot.
-
                 } catch (e) {
                     console.error("Erreur d'ajout de document de réservation : ", e);
                     title = "Erreur de Réservation";
-                    content = `Une erreur est survenue lors de la sauvegarde de votre réservation. Veuillez vérifier votre connexion. ${e.message}`;
+                    content = `Une erreur est survenue lors de la sauvegarde de votre réservation. Veuillez vérifier votre connexion. Détails: ${e.message}`;
                 }
                 
             } else if (formType === 'examen') {
@@ -693,7 +707,7 @@
             showMessage(title, content);
         }
 
-        // Initialisation : afficher la section Tarifs par défaut et initialiser Firebase
+        // Initialisation : afficher la section Conduite par défaut et initialiser Firebase
         document.addEventListener('DOMContentLoaded', () => {
             showSection('conduite'); // Afficher la section Conduite pour voir l'effet du tableau de bord
             initializeFirebase();
