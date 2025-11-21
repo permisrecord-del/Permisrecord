@@ -470,6 +470,9 @@
         let db;
         let auth;
         let userId = null;
+        // On utilise 'isFirebaseInitialized' pour s'assurer que l'erreur modale ne s'affiche qu'une fois
+        let isFirebaseInitialized = false; 
+        
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -481,6 +484,9 @@
          * Initialise Firebase et authentifie l'utilisateur.
          */
         async function initializeFirebase() {
+            if (isFirebaseInitialized) return; // Empêche l'initialisation multiple en cas d'erreur
+            isFirebaseInitialized = true;
+
             try {
                 // Configuration des logs de Firebase pour le débogage
                 setLogLevel('debug');
@@ -515,7 +521,11 @@
 
             } catch (error) {
                 console.error("Erreur lors de l'initialisation de Firebase:", error);
-                showMessage("Erreur Système", "Impossible de se connecter à la base de données. Veuillez réessayer plus tard.");
+                
+                // N'affiche le message d'erreur que si ce n'est pas une simple erreur de timestamp ou de doc manquant
+                if (error.code !== 'permission-denied' && error.code !== 'failed-precondition') {
+                    showMessage("Erreur Système", `Impossible de se connecter à la base de données. Veuillez réessayer plus tard. Détail de l'erreur: ${error.message}`);
+                }
             }
         }
         
@@ -526,7 +536,6 @@
             // VERIFICATION AJOUTÉE POUR EVITER LE CRASH SI DB OU USER ID MANQUENT
             if (!db || !userId) {
                 console.warn("Database or User ID not ready. Listener skipped.");
-                // Afficher un message d'erreur ou de chargement persistant si nécessaire
                 document.getElementById('reservation-loading').textContent = "En attente de connexion à la base de données...";
                 return;
             }
@@ -536,7 +545,7 @@
             const loadingElement = document.getElementById('reservation-loading');
             
             // onSnapshot écoute les changements en temps réel
-            onSnapshot(q, (snapshot) => {
+            const unsubscribe = onSnapshot(q, (snapshot) => {
                 const reservations = [];
                 snapshot.forEach((doc) => {
                     // Récupérer les données et l'ID du document
@@ -592,11 +601,22 @@
                 }
 
             }, (error) => {
-                console.error("Erreur d'écoute Firestore:", error);
-                listElement.innerHTML = '<p class="text-red-500">Erreur de connexion aux réservations.</p>';
-                loadingElement.classList.remove('hidden');
-                loadingElement.textContent = "Erreur: Vérifiez la console pour les détails de l'erreur Firebase.";
+                // Si l'erreur est un refus de permission (règles de sécurité), affiche la pop-up d'erreur.
+                if (error.code === 'permission-denied') {
+                    console.error("Erreur de permission Firestore: Vérifiez les règles de sécurité.");
+                    loadingElement.textContent = "Erreur de connexion : Accès à la base de données refusé (règles de sécurité ?)";
+                    showMessage("Erreur de Connexion", "Accès refusé à la base de données. Veuillez vérifier les règles de sécurité de Firestore.");
+                    // On ne renvoie pas l'erreur à la console pour éviter de surcharger
+                } else {
+                    console.error("Erreur d'écoute Firestore:", error);
+                    listElement.innerHTML = '<p class="text-red-500">Erreur de connexion aux réservations.</p>';
+                    loadingElement.classList.remove('hidden');
+                    loadingElement.textContent = "Erreur: Vérifiez la console pour les détails de l'erreur Firebase.";
+                }
             });
+            
+            // L'écouteur est retourné pour pouvoir être nettoyé (bonne pratique)
+            return unsubscribe; 
         }
 
 
