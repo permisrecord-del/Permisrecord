@@ -100,6 +100,7 @@
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Réservez vos Heures de Conduite</h2>
                 
+                <!-- Le formulaire est maintenant STATIQUE et déclenche une simple alerte simulée -->
                 <form onsubmit="handleFormSubmission(event, 'conduite')" class="space-y-4 mb-8">
                     <!-- Email de l'élève (Ajouté pour identifier le réservateur) -->
                     <div>
@@ -131,17 +132,14 @@
                     </div>
 
                     <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
-                        Réserver ma Leçon
+                        Réserver ma Leçon (Simulé)
                     </button>
                 </form>
 
-                <!-- Zone d'affichage des Réservations (l'alerte pour l'administrateur) -->
+                <!-- Zone d'affichage des Réservations (ADMIN) - SIMPLEMENT ENLEVÉE -->
                 <div class="mt-10 pt-6 border-t border-gray-700">
-                    <h3 class="text-xl font-bold gold-text mb-4">Tableau de Bord des Réservations (Admin)</h3>
-                    <p id="reservation-loading" class="text-gray-500 text-sm">Chargement des réservations en cours...</p>
-                    <div id="reservation-list" class="space-y-3">
-                        <!-- Les réservations seront injectées ici par JavaScript -->
-                    </div>
+                    <h3 class="text-xl font-bold gold-text mb-4">Fonctionnalité d'Administration</h3>
+                    <p class="text-gray-500 text-sm">Le tableau de bord des réservations est actuellement désactivé car la connexion à la base de données est impossible sans la mise à jour des règles de sécurité Firebase.</p>
                 </div>
             </div>
         </section>
@@ -205,7 +203,7 @@
                     </div>
 
                     <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
-                        Soumettre mon Dossier d'Inscription
+                        Soumettre mon Dossier d'Inscription (Simulé)
                     </button>
                 </form>
             </div>
@@ -239,7 +237,7 @@
                             </li>
                         </ul>
                         <button onclick="showMessage('Achat Code', 'Vous serez redirigé vers le paiement pour le Forfait Code. Merci !')" class="w-full mt-6 py-3 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200">
-                            S'inscrire au Code
+                            S'inscrire au Code (Simulé)
                         </button>
                     </div>
 
@@ -306,6 +304,7 @@
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Inscription à l'Examen Pratique</h2>
 
+                <!-- Le formulaire est maintenant STATIQUE et déclenche une simple alerte simulée -->
                 <form onsubmit="handleFormSubmission(event, 'examen')" class="space-y-4">
                     <!-- Permis concerné -->
                     <div>
@@ -337,7 +336,7 @@
                     </div>
 
                     <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
-                        Soumettre ma Demande
+                        Soumettre ma Demande (Simulé)
                     </button>
                 </form>
             </div>
@@ -459,167 +458,8 @@
         </p>
     </footer>
 
-    <!-- JavaScript pour la gestion des onglets, des formulaires et de Firebase -->
-    <script type="module">
-        // Importations Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, addDoc, onSnapshot, collection, query, where, serverTimestamp, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Variables globales pour Firebase et l'utilisateur
-        let db;
-        let auth;
-        let userId = null;
-        // On utilise 'isFirebaseInitialized' pour s'assurer que l'erreur modale ne s'affiche qu'une fois
-        let isFirebaseInitialized = false; 
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Référence à la collection (publique pour que l'admin puisse la consulter)
-        const RESERVATIONS_COLLECTION_PATH = `/artifacts/${appId}/public/data/reservations`;
-
-        /**
-         * Initialise Firebase et authentifie l'utilisateur.
-         */
-        async function initializeFirebase() {
-            if (isFirebaseInitialized) return; // Empêche l'initialisation multiple en cas d'erreur
-            isFirebaseInitialized = true;
-
-            try {
-                // Configuration des logs de Firebase pour le débogage
-                setLogLevel('debug');
-                
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                // Assurer la persistance de session (facultatif mais bonne pratique)
-                await setPersistence(auth, browserSessionPersistence);
-
-                // Authentification
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Attendre l'état d'authentification pour obtenir l'ID utilisateur
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        console.log("Firebase Auth Ready. User ID:", userId);
-                        // Lancer l'écoute des données une fois que l'auth est prête
-                        setupReservationsListener(); 
-                    } else {
-                        userId = crypto.randomUUID(); // Utiliser un ID temporaire si anonyme
-                        console.warn("Signed in anonymously. Using generated ID:", userId);
-                        setupReservationsListener();
-                    }
-                });
-
-            } catch (error) {
-                console.error("Erreur lors de l'initialisation de Firebase:", error);
-                
-                // N'affiche le message d'erreur que si ce n'est pas une simple erreur de timestamp ou de doc manquant
-                if (error.code !== 'permission-denied' && error.code !== 'failed-precondition') {
-                    showMessage("Erreur Système", `Impossible de se connecter à la base de données. Veuillez réessayer plus tard. Détail de l'erreur: ${error.message}`);
-                }
-            }
-        }
-        
-        /**
-         * Écoute en temps réel les nouvelles réservations (l'alerte admin).
-         */
-        function setupReservationsListener() {
-            // VERIFICATION AJOUTÉE POUR EVITER LE CRASH SI DB OU USER ID MANQUENT
-            if (!db || !userId) {
-                console.warn("Database or User ID not ready. Listener skipped.");
-                document.getElementById('reservation-loading').textContent = "En attente de connexion à la base de données...";
-                return;
-            }
-
-            const q = collection(db, RESERVATIONS_COLLECTION_PATH);
-            const listElement = document.getElementById('reservation-list');
-            const loadingElement = document.getElementById('reservation-loading');
-            
-            // onSnapshot écoute les changements en temps réel
-            const unsubscribe = onSnapshot(q, (snapshot) => {
-                const reservations = [];
-                snapshot.forEach((doc) => {
-                    // Récupérer les données et l'ID du document
-                    reservations.push({ id: doc.id, ...doc.data() });
-                });
-
-                // FIX: Gestion robuste du tri pour éviter le crash si createdAt n'est pas encore un Timestamp
-                reservations.sort((a, b) => {
-                    // Utilise 0 si le timestamp n'est pas encore disponible (pour le placer en bas du tri)
-                    const timeA = a.createdAt && typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : 0;
-                    const timeB = b.createdAt && typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : 0;
-                    return timeB - timeA; // Tri descendant (plus récent en premier)
-                });
-
-                // Affichage
-                loadingElement.classList.add('hidden');
-                listElement.innerHTML = ''; // Nettoyer la liste
-                
-                if (reservations.length === 0) {
-                    listElement.innerHTML = '<p class="text-gray-500">Aucune réservation en attente.</p>';
-                } else {
-                    reservations.forEach(reservation => {
-                        // Utilise un fallback si la date/heure n'est pas encore présente
-                        const date = reservation.date || 'N/A';
-                        const time = reservation.time || 'N/A';
-                        const lessonDate = date !== 'N/A' && time !== 'N/A' 
-                            ? new Date(date + 'T' + time).toLocaleDateString('fr-FR', { 
-                                weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-                            })
-                            : 'Date Indisponible';
-                        
-                        const item = document.createElement('div');
-                        item.className = 'p-3 bg-gray-800 rounded-lg border border-gray-700 hover:border-yellow-500 transition duration-200';
-                        item.innerHTML = `
-                            <p class="text-sm font-bold gold-text">Nouvelle Réservation (#${reservation.id.substring(0, 4)})</p>
-                            <p class="text-gray-300 mt-1">
-                                <span class="font-semibold">${reservation.email || 'Email non spécifié'}</span> a réservé une leçon de type <span class="font-semibold">${reservation.type || 'Inconnu'}</span>.
-                            </p>
-                            <p class="text-xs text-gray-500 mt-1">
-                                Date & Heure : ${lessonDate}
-                            </p>
-                        `;
-                        listElement.appendChild(item);
-                    });
-                }
-                
-                // Alerte visuelle : Mettre en évidence la section Conduite si de nouvelles réservations arrivent (simple notification)
-                const conduiteTab = document.querySelector(`.tab-button[data-target="conduite"]`);
-                if (reservations.length > 0 && conduiteTab) {
-                     // Petite animation d'alerte pour l'admin
-                     conduiteTab.style.boxShadow = '0 0 10px #FFD700';
-                     setTimeout(() => conduiteTab.style.boxShadow = 'none', 1000);
-                }
-
-            }, (error) => {
-                // Si l'erreur est un refus de permission (règles de sécurité), affiche la pop-up d'erreur.
-                if (error.code === 'permission-denied') {
-                    console.error("Erreur de permission Firestore: Vérifiez les règles de sécurité.");
-                    loadingElement.textContent = "Erreur de connexion : Accès à la base de données refusé (règles de sécurité ?)";
-                    showMessage("Erreur de Connexion", "Accès refusé à la base de données. Veuillez vérifier les règles de sécurité de Firestore.");
-                    // On ne renvoie pas l'erreur à la console pour éviter de surcharger
-                } else {
-                    console.error("Erreur d'écoute Firestore:", error);
-                    listElement.innerHTML = '<p class="text-red-500">Erreur de connexion aux réservations.</p>';
-                    loadingElement.classList.remove('hidden');
-                    loadingElement.textContent = "Erreur: Vérifiez la console pour les détails de l'erreur Firebase.";
-                }
-            });
-            
-            // L'écouteur est retourné pour pouvoir être nettoyé (bonne pratique)
-            return unsubscribe; 
-        }
-
-
+    <!-- JavaScript pour la gestion des onglets et des formulaires (Fonctionnalités Firebase supprimées) -->
+    <script>
         // Fonction pour afficher une section spécifique et mettre à jour le style des boutons
         function showSection(targetId) {
             // Cacher toutes les sections
@@ -628,9 +468,7 @@
             });
             // Réinitialiser les styles de tous les boutons
             document.querySelectorAll('.tab-button').forEach(button => {
-                // S'assurer que les classes de mise en évidence sont retirées
                 button.classList.remove('gold-text', 'bg-gray-700', 'border-b-4', 'gold-border');
-                // Réappliquer les styles de base pour un état non sélectionné
                 button.classList.add('text-gray-400');
             });
 
@@ -651,7 +489,7 @@
         // Fonction pour afficher le message modal (remplace alert/confirm)
         function showMessage(title, content) {
             document.getElementById('message-title').textContent = title;
-            document.getElementById('message-content').innerHTML = content; // Utiliser innerHTML pour le HTML dans le message
+            document.getElementById('message-content').innerHTML = content;
             document.getElementById('message-box').classList.remove('hidden');
             document.getElementById('message-box').classList.add('flex');
         }
@@ -662,75 +500,38 @@
             document.getElementById('message-box').classList.remove('flex');
         }
 
-        // Gestionnaire de soumission de formulaire
-        async function handleFormSubmission(event, formType) {
+        // Gestionnaire de soumission de formulaire (MAINTENANT SIMPLEMENT UNE SIMULATION)
+        function handleFormSubmission(event, formType) {
             event.preventDefault(); // Empêche l'envoi réel du formulaire
 
-            // VERIFICATION AJOUTÉE
-            if (!db) {
-                showMessage("Erreur de Connexion", "La base de données n'est pas initialisée. Veuillez rafraîchir la page ou vérifier l'initialisation de Firebase.");
-                return;
-            }
+            let title = "Demande Enregistrée (Simulation)";
+            let content = "Votre demande a bien été reçue par l'équipe Permis Record. Note: La connexion à la base de données est actuellement désactivée.";
 
-            let title = "Demande Enregistrée";
-            let content = "Votre demande a bien été reçue par l'équipe Permis Record.";
-
-            // Logique de soumission pour les Réservations de Conduite (Sauvegarde dans Firestore)
             if (formType === 'conduite') {
-                const email = document.getElementById('lesson-email').value;
                 const date = document.getElementById('lesson-date').value;
                 const time = document.getElementById('lesson-time').value;
                 const typeElement = document.getElementById('lesson-type');
                 const lessonType = typeElement.options[typeElement.selectedIndex].text;
                 
-                try {
-                    // Créer le document de réservation
-                    const newReservation = {
-                        email: email,
-                        date: date,
-                        time: time,
-                        type: lessonType,
-                        status: 'En attente',
-                        reservedBy: userId,
-                        createdAt: serverTimestamp() // Marque la date de création sur le serveur
-                    };
-
-                    // Ajouter le document à la collection
-                    await addDoc(collection(db, RESERVATIONS_COLLECTION_PATH), newReservation);
-
-                    title = "Réservation Confirmée (Sauvegardée)";
-                    content = `Votre réservation pour une <strong>${lessonType}</strong> le <strong>${date}</strong> à <strong>${time}</strong> a été sauvegardée. Notre équipe la traite et vous enverra un email de confirmation (simulé) sous peu.`;
-
-                } catch (e) {
-                    console.error("Erreur d'ajout de document de réservation : ", e);
-                    title = "Erreur de Réservation";
-                    content = `Une erreur est survenue lors de la sauvegarde de votre réservation. Veuillez vérifier votre connexion. Détails: ${e.message}`;
-                }
+                content = `Votre réservation pour une <strong>${lessonType}</strong> le <strong>${date}</strong> à <strong>${time}</strong> a été enregistrée. (Fonctionnalité de sauvegarde réelle désactivée)`;
                 
             } else if (formType === 'examen') {
-                // Logique pour Examen (Simulation, car pas critique pour l'alerte)
-                const examType = document.getElementById('exam-type').value;
                 const date1 = document.getElementById('exam-date-1').value;
-                
-                title = "Demande d'Examen Reçue (Simulée)";
-                content = `Votre demande pour le permis ${examType} pour le <strong>${date1}</strong> a été enregistrée. Nous la traitons et vous enverrons un email dès que la date est confirmée officiellement (Simulation).`;
+                content = `Votre demande d'examen pour le <strong>${date1}</strong> a été enregistrée. (Fonctionnalité de sauvegarde réelle désactivée)`;
             } else if (formType === 'inscription') {
-                // Logique pour Inscription (Simulation, car pas critique pour l'alerte)
-                title = "Pré-inscription Réussie (Simulée)";
-                content = `Félicitations ! Votre dossier a été soumis (Simulation). Veuillez consulter l'email que nous venons de vous envoyer pour la liste des documents à fournir et la finalisation de votre inscription.`;
+                content = `Félicitations ! Votre dossier de pré-inscription a été soumis. (Fonctionnalité de sauvegarde réelle désactivée)`;
             }
 
             // Nettoyer les champs du formulaire après l'envoi
             event.target.reset();
 
-            // Afficher la confirmation
+            // Afficher la confirmation simulée
             showMessage(title, content);
         }
 
-        // Initialisation : afficher la section Conduite par défaut et initialiser Firebase
+        // Initialisation : afficher la section Conduite par défaut
         document.addEventListener('DOMContentLoaded', () => {
-            showSection('conduite'); // Afficher la section Conduite pour voir l'effet du tableau de bord
-            initializeFirebase();
+            showSection('conduite');
         });
     </script>
 
