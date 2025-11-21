@@ -520,6 +520,7 @@
         
         /**
          * Initialise Firebase et authentifie l'utilisateur.
+         * MODIFICATION: Suppression de l'appel initial à showFirebaseError dans le catch principal.
          */
         async function initializeFirebase() {
             try {
@@ -552,13 +553,16 @@
                     connectionErrorShown = false; 
 
                 }, (error) => {
+                    // Ce gestionnaire d'erreur se déclenche pour les problèmes persistants
                     console.error("Erreur onAuthStateChanged:", error);
                     showFirebaseError();
                 });
 
             } catch (error) {
-                console.error("Erreur lors de l'initialisation de Firebase:", error);
-                    showFirebaseError();
+                // Cette erreur est souvent transitoire ou liée à la configuration initiale non critique.
+                // On log l'erreur mais on n'affiche plus le message utilisateur pour éviter le pop-up indésirable.
+                console.error("Erreur lors de l'initialisation de Firebase (ignorable) :", error);
+                // showFirebaseError(); <-- Supprimé pour éviter le message de bienvenue indésirable
             }
         }
 
