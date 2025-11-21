@@ -46,20 +46,20 @@
                 <p class="text-sm text-gray-400">La route vers votre liberté</p>
             </div>
             
-            <!-- Numéro de téléphone ajouté ici -->
+            <!-- Numéro de téléphone -->
             <a href="tel:+33767739780" class="flex items-center text-lg font-bold text-white hover:gold-text transition duration-200 mt-2 sm:mt-0 p-2 rounded-lg bg-gray-800 border gold-border border-opacity-30">
-                <!-- Icône de téléphone -->
-                <span class="gold-text mr-2 text-xl">&#9742;</span>
+                <!-- Icône de téléphone 📞 -->
+                <span class="gold-text mr-2 text-xl">&#128222;</span>
                 <span class="tracking-wider">07 67 73 97 80</span>
             </a>
             
         </div>
 
-        <!-- Navigation principale par onglets - Mis à jour pour 6 boutons (w-1/6) -->
+        <!-- Navigation principale par onglets -->
         <nav class="bg-gray-800 border-t border-b gold-border">
             <div class="max-w-4xl mx-auto flex justify-around text-center">
-                <button onclick="showSection('conduite')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="conduite">
-                    Conduite
+                <button onclick="showSection('accueil-et-reservation')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="accueil-et-reservation">
+                    Accueil
                 </button>
                 <button onclick="showSection('inscription')" class="tab-button w-1/6 py-3 px-1 text-xs sm:text-sm font-semibold transition duration-300 hover:bg-gray-700" data-target="inscription">
                     Inscription
@@ -95,28 +95,55 @@
         </div>
 
 
-        <!-- SECTION 1: Réservation d'heures de conduite -->
-        <section id="conduite" class="content-section">
-            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
-                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Réservez vos Heures de Conduite</h2>
+        <!-- SECTION 1: Accueil et Réservation d'heures de conduite -->
+        <section id="accueil-et-reservation" class="content-section">
+
+            <!-- Bloc Accueil/Héros -->
+            <div class="p-6 sm:p-8 mb-8 bg-gray-900 rounded-xl shadow-2xl border gold-border border-opacity-50 flex flex-col items-center text-center">
                 
-                <!-- Le formulaire est maintenant STATIQUE et déclenche une simple alerte simulée -->
-                <form onsubmit="handleFormSubmission(event, 'conduite')" class="space-y-4 mb-8">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-2">
+                    Bienvenue sur Permis Record !
+                </h2>
+                <p class="text-xl gold-text font-semibold mb-4">
+                    "Ma Liberté à Prix Record."
+                </p>
+                <p class="text-gray-400 max-w-lg">
+                    Commencez dès aujourd'hui votre formation en ligne. Réservez vos leçons de conduite ou soumettez votre dossier d'inscription ci-dessous.
+                </p>
+                <button onclick="showSection('inscription')" class="mt-6 py-3 px-8 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-xl hover:shadow-yellow-500/70">
+                    Je m'inscris maintenant
+                </button>
+            </div>
+            <!-- Fin Bloc Accueil/Héros -->
+
+
+            <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
+                <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Réservez et Payez vos Heures de Conduite</h2>
+                
+                <!-- Le formulaire de réservation de leçons -->
+                <form id="reservation-form" onsubmit="handleFormSubmission(event, 'conduite')" class="space-y-4 mb-8">
                     <!-- Email de l'élève (Ajouté pour identifier le réservateur) -->
                     <div>
                         <label for="lesson-email" class="block text-sm font-medium text-gray-400">Votre Email (obligatoire)</label>
                         <input type="email" id="lesson-email" required placeholder="nom.prenom@example.com" class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
                     </div>
 
-                    <!-- Type de leçon -->
+                    <!-- Type de leçon avec événement onchange pour la mise à jour du prix -->
                     <div>
                         <label for="lesson-type" class="block text-sm font-medium text-gray-400">Type de Leçon</label>
-                        <select id="lesson-type" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
+                        <select id="lesson-type" onchange="updatePriceDisplay()" required class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
                             <option value="">Sélectionnez un type</option>
-                            <option value="initiale">Leçon initiale (2h)</option>
-                            <option value="perfectionnement">Perfectionnement (1h)</option>
-                            <option value="conduite_accompagnee">Conduite Accompagnée (2h)</option>
+                            <!-- Les valeurs correspondent aux clés dans LESSON_PRICES en JS -->
+                            <option value="perfectionnement">Perfectionnement (1h) - 50 €</option>
+                            <option value="initiale">Leçon initiale (2h) - 100 €</option>
+                            <option value="conduite_accompagnee">Conduite Accompagnée (2h) - 100 €</option>
                         </select>
+                    </div>
+
+                    <!-- AFFICHAGE DYNAMIQUE DU PRIX -->
+                    <div id="lesson-price-display" class="p-3 bg-gray-800 rounded-lg text-center font-bold text-xl transition-all duration-300">
+                        <!-- Le prix sera affiché ici -->
+                        Sélectionnez une leçon pour voir le prix.
                     </div>
 
                     <!-- Date souhaitée -->
@@ -131,20 +158,17 @@
                         <input type="time" id="lesson-time" required min="08:00" max="18:00" class="mt-1 block w-full p-3 rounded-lg bg-gray-700 border-gray-600 focus:ring-yellow-500 focus:border-yellow-500 text-white">
                     </div>
 
-                    <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
-                        Réserver ma Leçon (Simulé)
+                    <button type="submit" id="reserve-button" disabled class="w-full py-3 px-4 mt-6 rounded-lg bg-gray-600 text-gray-300 font-bold text-lg cursor-not-allowed transition duration-200">
+                        Payer et Réserver la Leçon (via PayPal)
                     </button>
+                    <p class="text-center text-sm text-gray-500">
+                        Le paiement sécurisé est effectué via la plateforme PayPal.
+                    </p>
                 </form>
-
-                <!-- Zone d'affichage des Réservations (ADMIN) - SIMPLEMENT ENLEVÉE -->
-                <div class="mt-10 pt-6 border-t border-gray-700">
-                    <h3 class="text-xl font-bold gold-text mb-4">Fonctionnalité d'Administration</h3>
-                    <p class="text-gray-500 text-sm">Le tableau de bord des réservations est actuellement désactivé car la connexion à la base de données est impossible sans la mise à jour des règles de sécurité Firebase.</p>
-                </div>
             </div>
         </section>
 
-        <!-- SECTION 2: Inscription de l'élève -->
+        <!-- SECTION 2: Inscription de l'élève (Reste inchangée) -->
         <section id="inscription" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Inscription à l'Auto-École</h2>
@@ -203,13 +227,13 @@
                     </div>
 
                     <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
-                        Soumettre mon Dossier d'Inscription (Simulé)
+                        Soumettre mon Dossier d'Inscription
                     </button>
                 </form>
             </div>
         </section>
 
-        <!-- NOUVELLE SECTION 3: Tarifs et Forfaits -->
+        <!-- SECTION 3: Tarifs et Forfaits (Reste inchangée) -->
         <section id="tarifs" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Nos Tarifs et Forfaits Compétitifs</h2>
@@ -237,7 +261,7 @@
                             </li>
                         </ul>
                         <button onclick="showMessage('Achat Code', 'Vous serez redirigé vers le paiement pour le Forfait Code. Merci !')" class="w-full mt-6 py-3 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200">
-                            S'inscrire au Code (Simulé)
+                            S'inscrire au Code
                         </button>
                     </div>
 
@@ -288,7 +312,7 @@
                     </div>
                 </div>
                 
-                <!-- Tarif Unitaire MODIFIÉ À 50 € -->
+                <!-- Tarif Unitaire -->
                 <div class="mt-10 p-4 bg-gray-900 border-t border-b border-gray-700 rounded-lg">
                     <p class="text-lg font-semibold gold-text">Tarif de l'Heure de Conduite Unitaire :</p>
                     <p class="text-xl font-extrabold text-gray-300 mt-1">50 € / heure</p>
@@ -299,12 +323,11 @@
         </section>
 
 
-        <!-- SECTION 4: Réservation de date d'examen -->
+        <!-- SECTION 4: Réservation de date d'examen (Reste inchangée) -->
         <section id="examen" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Inscription à l'Examen Pratique</h2>
 
-                <!-- Le formulaire est maintenant STATIQUE et déclenche une simple alerte simulée -->
                 <form onsubmit="handleFormSubmission(event, 'examen')" class="space-y-4">
                     <!-- Permis concerné -->
                     <div>
@@ -336,13 +359,13 @@
                     </div>
 
                     <button type="submit" class="w-full py-3 px-4 mt-6 rounded-lg gold-bg text-gray-900 font-bold text-lg transition duration-200 shadow-md hover:shadow-yellow-500/50">
-                        Soumettre ma Demande (Simulé)
+                        Soumettre ma Demande
                     </button>
                 </form>
             </div>
         </section>
 
-        <!-- SECTION 5: Révision du Code de la Route en Ligne -->
+        <!-- SECTION 5: Révision du Code de la Route en Ligne (Reste inchangée) -->
         <section id="code" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Révision du Code de la Route en Ligne</h2>
@@ -398,7 +421,7 @@
             </div>
         </section>
         
-        <!-- SECTION 6: Informations Légales -->
+        <!-- SECTION 6: Informations Légales (Reste inchangée) -->
         <section id="legales" class="content-section hidden">
             <div class="p-6 bg-gray-900 rounded-xl shadow-lg border gold-border border-opacity-30">
                 <h2 class="text-2xl font-bold gold-text mb-6 border-b pb-2 border-gray-700">Informations Légales et Conditions Générales</h2>
@@ -458,27 +481,102 @@
         </p>
     </footer>
 
-    <!-- JavaScript pour la gestion des onglets et des formulaires (Fonctionnalités Firebase supprimées) -->
-    <script>
+    <!-- JavaScript pour la gestion des onglets, des formulaires et de Firebase -->
+    <script type="module">
+        // Importations Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // Ajout des fonctions Firestore nécessaires pour l'écriture
+        import { getFirestore, addDoc, collection, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Variables globales pour Firebase et l'utilisateur
+        let db;
+        let auth;
+        let userId = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        let connectionErrorShown = false;
+        
+        // Chemin de la collection publique pour les réservations (accessible par l'admin)
+        const RESERVATIONS_COLLECTION_PATH = `/artifacts/${appId}/public/data/reservations`;
+
+        // Configuration des prix par type de leçon
+        const LESSON_PRICES = {
+            "initiale": { hours: 2, price: 100, label: "Leçon initiale (2h)" },
+            "perfectionnement": { hours: 1, price: 50, label: "Perfectionnement (1h)" },
+            "conduite_accompagnee": { hours: 2, price: 100, label: "Conduite Accompagnée (2h)" }
+        };
+        
+        /**
+         * Affiche un message d'erreur de connexion Firebase
+         */
+        function showFirebaseError() {
+            if (!connectionErrorShown) {
+                showMessage("Erreur Système", "Impossible de se connecter à la base de données ou d'enregistrer les données. Veuillez vérifier les règles de sécurité Firebase.");
+                connectionErrorShown = true;
+            }
+        }
+        
+        /**
+         * Initialise Firebase et authentifie l'utilisateur.
+         */
+        async function initializeFirebase() {
+            try {
+                setLogLevel('debug');
+                if (Object.keys(firebaseConfig).length === 0) {
+                    throw new Error("Firebase configuration non trouvée.");
+                }
+
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                await setPersistence(auth, browserSessionPersistence);
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase Auth Ready. User ID:", userId);
+                    } else {
+                        userId = crypto.randomUUID(); 
+                        console.warn("Signed in anonymously. Using generated ID:", userId);
+                    }
+                    // Connexion réussie, réinitialise le drapeau d'erreur.
+                    connectionErrorShown = false; 
+
+                }, (error) => {
+                    console.error("Erreur onAuthStateChanged:", error);
+                    showFirebaseError();
+                });
+
+            } catch (error) {
+                console.error("Erreur lors de l'initialisation de Firebase:", error);
+                    showFirebaseError();
+            }
+        }
+
         // Fonction pour afficher une section spécifique et mettre à jour le style des boutons
-        function showSection(targetId) {
-            // Cacher toutes les sections
+        window.showSection = (targetId) => {
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.add('hidden');
             });
-            // Réinitialiser les styles de tous les boutons
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('gold-text', 'bg-gray-700', 'border-b-4', 'gold-border');
                 button.classList.add('text-gray-400');
             });
 
-            // Afficher la section cible
             const targetSection = document.getElementById(targetId);
             if (targetSection) {
                 targetSection.classList.remove('hidden');
             }
 
-            // Mettre en évidence le bouton actif
             const activeTab = document.querySelector(`.tab-button[data-target="${targetId}"]`);
             if (activeTab) {
                 activeTab.classList.remove('text-gray-400');
@@ -487,7 +585,7 @@
         }
 
         // Fonction pour afficher le message modal (remplace alert/confirm)
-        function showMessage(title, content) {
+        window.showMessage = (title, content) => {
             document.getElementById('message-title').textContent = title;
             document.getElementById('message-content').innerHTML = content;
             document.getElementById('message-box').classList.remove('hidden');
@@ -495,43 +593,142 @@
         }
 
         // Fonction pour masquer le message modal
-        function hideMessage() {
+        window.hideMessage = () => {
             document.getElementById('message-box').classList.add('hidden');
             document.getElementById('message-box').classList.remove('flex');
         }
 
-        // Gestionnaire de soumission de formulaire (MAINTENANT SIMPLEMENT UNE SIMULATION)
-        function handleFormSubmission(event, formType) {
-            event.preventDefault(); // Empêche l'envoi réel du formulaire
-
-            let title = "Demande Enregistrée (Simulation)";
-            let content = "Votre demande a bien été reçue par l'équipe Permis Record. Note: La connexion à la base de données est actuellement désactivée.";
-
-            if (formType === 'conduite') {
-                const date = document.getElementById('lesson-date').value;
-                const time = document.getElementById('lesson-time').value;
-                const typeElement = document.getElementById('lesson-type');
-                const lessonType = typeElement.options[typeElement.selectedIndex].text;
+        /**
+         * Mise à jour de l'affichage du prix en fonction de la sélection.
+         */
+        window.updatePriceDisplay = () => {
+            const selectElement = document.getElementById('lesson-type');
+            const displayElement = document.getElementById('lesson-price-display');
+            const buttonElement = document.getElementById('reserve-button');
+            const selectedType = selectElement.value;
+            
+            if (selectedType && LESSON_PRICES[selectedType]) {
+                const priceInfo = LESSON_PRICES[selectedType];
+                displayElement.innerHTML = `Prix total à payer : <span class="text-white text-3xl">${priceInfo.price} €</span>`;
                 
-                content = `Votre réservation pour une <strong>${lessonType}</strong> le <strong>${date}</strong> à <strong>${time}</strong> a été enregistrée. (Fonctionnalité de sauvegarde réelle désactivée)`;
+                // Active le bouton de paiement
+                buttonElement.disabled = false;
+                buttonElement.classList.remove('bg-gray-600', 'text-gray-300', 'cursor-not-allowed');
+                buttonElement.classList.add('gold-bg', 'text-gray-900', 'hover:bg-yellow-400', 'shadow-md', 'hover:shadow-yellow-500/50');
+
+            } else {
+                displayElement.innerHTML = `Sélectionnez une leçon pour voir le prix.`;
                 
-            } else if (formType === 'examen') {
-                const date1 = document.getElementById('exam-date-1').value;
-                content = `Votre demande d'examen pour le <strong>${date1}</strong> a été enregistrée. (Fonctionnalité de sauvegarde réelle désactivée)`;
-            } else if (formType === 'inscription') {
-                content = `Félicitations ! Votre dossier de pré-inscription a été soumis. (Fonctionnalité de sauvegarde réelle désactivée)`;
+                // Désactive le bouton de paiement
+                buttonElement.disabled = true;
+                buttonElement.classList.add('bg-gray-600', 'text-gray-300', 'cursor-not-allowed');
+                buttonElement.classList.remove('gold-bg', 'text-gray-900', 'hover:bg-yellow-400', 'shadow-md', 'hover:shadow-yellow-500/50');
             }
-
-            // Nettoyer les champs du formulaire après l'envoi
-            event.target.reset();
-
-            // Afficher la confirmation simulée
-            showMessage(title, content);
         }
 
-        // Initialisation : afficher la section Conduite par défaut
+        /**
+         * Construit l'URL de paiement PayPal (à adapter).
+         * @param {number} price Le montant à payer.
+         * @param {string} item Le nom de l'article.
+         * @returns {string} L'URL PayPal.
+         */
+        function buildPayPalLink(price, item) {
+            // 🚨 REMPLACEZ 'votre-email-paypal-ici@example.com' par votre adresse email PayPal Business réelle.
+            const businessEmail = 'votre-email-paypal-ici@example.com'; 
+            const baseUrl = 'https://www.paypal.com/cgi-bin/webscr?';
+            const params = new URLSearchParams({
+                cmd: '_xclick',
+                business: businessEmail,
+                item_name: `Reservation Leçon: ${item}`,
+                amount: price.toFixed(2), // 100.00
+                currency_code: 'EUR',
+                // Facultatif : URL de retour après paiement (exemple)
+                // return: window.location.href 
+            });
+            return baseUrl + params.toString();
+        }
+
+
+        // Gestionnaire de soumission de formulaire
+        window.handleFormSubmission = async (event, formType) => {
+            event.preventDefault(); // Empêche l'envoi réel du formulaire
+
+            if (formType === 'conduite') {
+                if (!db || !userId) {
+                    showFirebaseError();
+                    return;
+                }
+
+                const email = document.getElementById('lesson-email').value;
+                const selectElement = document.getElementById('lesson-type');
+                const selectedType = selectElement.value;
+                const date = document.getElementById('lesson-date').value;
+                const time = document.getElementById('lesson-time').value;
+
+                if (!selectedType || !date || !time || !email) {
+                    showMessage("Erreur de Réservation", "Veuillez remplir tous les champs (Email, Type de Leçon, Date et Heure).");
+                    return;
+                }
+                
+                const priceInfo = LESSON_PRICES[selectedType];
+                const paypalLink = buildPayPalLink(priceInfo.price, priceInfo.label);
+                
+                // 1. Sauvegarder la réservation dans Firestore (statut 'En attente de paiement')
+                try {
+                    const newReservation = {
+                        email: email,
+                        type: priceInfo.label,
+                        price: priceInfo.price,
+                        date: date,
+                        time: time,
+                        status: 'En attente de paiement', // Statut pour indiquer que le paiement n'est pas encore confirmé
+                        reservedBy: userId,
+                        createdAt: serverTimestamp() 
+                    };
+
+                    await addDoc(collection(db, RESERVATIONS_COLLECTION_PATH), newReservation);
+
+                } catch (e) {
+                    console.error("Erreur d'ajout de document de réservation : ", e);
+                    showMessage("Erreur Système", `Impossible de sauvegarder votre demande de réservation (Erreur Firestore). Veuillez réessayer. ${e.message}`);
+                    return; // Arrêter si la sauvegarde échoue
+                }
+
+                // 2. Ouvrir le modal pour la redirection PayPal
+                const content = `
+                    <p class="mb-4 text-gray-300">
+                        Votre demande de réservation a été enregistrée. Veuillez finaliser le paiement pour confirmer votre leçon.
+                    </p>
+                    <p class="mb-4">
+                        Montant à régler : <strong>${priceInfo.price} €</strong> pour votre leçon de <strong>${priceInfo.label}</strong>.
+                    </p>
+                    <a href="${paypalLink}" target="_blank" class="block w-full py-3 px-4 rounded-lg gold-bg text-gray-900 font-bold hover:bg-yellow-400 transition duration-200 text-center text-lg shadow-md" onclick="hideMessage(); event.target.textContent='Redirection en cours...'">
+                        Continuer vers PayPal pour le Paiement
+                    </a>
+                `;
+
+                showMessage("Finaliser le Paiement", content);
+
+            } else if (formType === 'examen') {
+                // Logique pour Examen (Simulation)
+                const examType = document.getElementById('exam-type').value;
+                const date1 = document.getElementById('exam-date-1').value;
+                
+                showMessage("Demande d'Examen Reçue (Simulation)", `Votre demande pour le permis ${examType} pour le <strong>${date1}</strong> a été enregistrée (Simulation).`);
+                event.target.reset();
+
+            } else if (formType === 'inscription') {
+                // Logique pour Inscription (Simulation)
+                showMessage("Pré-inscription Réussie (Simulation)", `Félicitations ! Votre dossier a été soumis (Simulation). Veuillez consulter l'email que nous venons de vous envoyer pour la liste des documents à fournir et la finalisation de votre inscription.`);
+                event.target.reset();
+            }
+        }
+
+        // Initialisation : afficher la section Accueil par défaut et initialiser Firebase
         document.addEventListener('DOMContentLoaded', () => {
-            showSection('conduite');
+            showSection('accueil-et-reservation'); 
+            initializeFirebase();
+            updatePriceDisplay(); // Initialise l'affichage du prix au chargement
         });
     </script>
 
