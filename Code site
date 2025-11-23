@@ -1,0 +1,321 @@
+
+# Créer le fichier HTML principal (page d'accueil)
+html_content = '''<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-École Excellence - Permis Accéléré & Formation en Ligne</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header / Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <i class="fas fa-car"></i>
+                    <span>Excellence Auto-École</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#formules">Formules</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#avis">Avis</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="espace-eleve.html" class="btn-login">Espace Élève</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="accueil">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Obtenez Votre Permis Rapidement</h1>
+            <p>Formation accélérée, cours en ligne et réservation simplifiée</p>
+            <div class="hero-buttons">
+                <a href="#reservation" class="btn btn-primary">Réserver une leçon</a>
+                <a href="#formules" class="btn btn-secondary">Découvrir nos formules</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <i class="fas fa-trophy"></i>
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label">Taux de réussite</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-users"></i>
+                    <span class="stat-number">2500+</span>
+                    <span class="stat-label">Élèves formés</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-clock"></i>
+                    <span class="stat-number">30 jours</span>
+                    <span class="stat-label">Formation accélérée</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">Nos Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Réservation en Ligne</h3>
+                    <p>Réservez vos heures de conduite en quelques clics avec notre calendrier interactif</p>
+                    <a href="reservation.html" class="service-link">Réserver maintenant <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Cours de Code en Ligne</h3>
+                    <p>Accédez à notre plateforme de cours vidéo disponible 24/7</p>
+                    <a href="cours-code.html" class="service-link">Commencer <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3>Inscription aux Examens</h3>
+                    <p>Réservez votre place d'examen et suivez votre dossier en ligne</p>
+                    <a href="examen.html" class="service-link">S'inscrire <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Espace Élève</h3>
+                    <p>Suivez votre progression, vos réservations et vos documents</p>
+                    <a href="espace-eleve.html" class="service-link">Accéder <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formules Section -->
+    <section class="formules" id="formules">
+        <div class="container">
+            <h2 class="section-title">Nos Formules</h2>
+            <div class="formules-grid">
+                <div class="formule-card">
+                    <div class="formule-header">
+                        <h3>Formule Classique</h3>
+                        <div class="formule-price">
+                            <span class="price">899€</span>
+                        </div>
+                    </div>
+                    <ul class="formule-features">
+                        <li><i class="fas fa-check"></i> Code de la route en ligne</li>
+                        <li><i class="fas fa-check"></i> 20 heures de conduite</li>
+                        <li><i class="fas fa-check"></i> Présentation à l'examen</li>
+                        <li><i class="fas fa-check"></i> Livret d'apprentissage</li>
+                    </ul>
+                    <a href="reservation.html?formule=classique" class="btn btn-outline">Choisir cette formule</a>
+                </div>
+                <div class="formule-card featured">
+                    <div class="badge">Populaire</div>
+                    <div class="formule-header">
+                        <h3>Permis Accéléré</h3>
+                        <div class="formule-price">
+                            <span class="price">1499€</span>
+                        </div>
+                    </div>
+                    <ul class="formule-features">
+                        <li><i class="fas fa-check"></i> Code en 2 semaines</li>
+                        <li><i class="fas fa-check"></i> 30 heures de conduite intensive</li>
+                        <li><i class="fas fa-check"></i> Examen en 30 jours</li>
+                        <li><i class="fas fa-check"></i> Suivi personnalisé</li>
+                        <li><i class="fas fa-check"></i> Garantie satisfaction</li>
+                    </ul>
+                    <a href="reservation.html?formule=accelere" class="btn btn-primary">Choisir cette formule</a>
+                </div>
+                <div class="formule-card">
+                    <div class="formule-header">
+                        <h3>Formule Premium</h3>
+                        <div class="formule-price">
+                            <span class="price">1899€</span>
+                        </div>
+                    </div>
+                    <ul class="formule-features">
+                        <li><i class="fas fa-check"></i> Tout inclus</li>
+                        <li><i class="fas fa-check"></i> 40 heures de conduite</li>
+                        <li><i class="fas fa-check"></i> Véhicule premium</li>
+                        <li><i class="fas fa-check"></i> Moniteur dédié</li>
+                        <li><i class="fas fa-check"></i> 2e passage offert</li>
+                    </ul>
+                    <a href="reservation.html?formule=premium" class="btn btn-outline">Choisir cette formule</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Avis Section -->
+    <section class="avis" id="avis">
+        <div class="container">
+            <h2 class="section-title">Ils Nous Font Confiance</h2>
+            <div class="avis-grid">
+                <div class="avis-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Équipe au top ! J'ai eu mon permis en 1 mois avec la formule accélérée. Je recommande vivement !"</p>
+                    <div class="avis-author">
+                        <strong>Sarah M.</strong>
+                        <span>Permis obtenu en mars 2025</span>
+                    </div>
+                </div>
+                <div class="avis-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Les cours de code en ligne sont excellents. Interface claire et quiz très utiles pour réviser."</p>
+                    <div class="avis-author">
+                        <strong>Thomas L.</strong>
+                        <span>Élève actuel</span>
+                    </div>
+                </div>
+                <div class="avis-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Moniteurs patients et professionnels. La réservation en ligne est super pratique !"</p>
+                    <div class="avis-author">
+                        <strong>Emma D.</strong>
+                        <span>Permis obtenu en octobre 2025</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Questions Fréquentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Combien de temps dure la formation ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>La durée varie selon la formule choisie. La formule classique prend 2-3 mois, tandis que notre permis accéléré vous permet d'obtenir votre permis en seulement 30 jours.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Puis-je payer en plusieurs fois ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Oui, nous proposons des facilités de paiement en 3, 6 ou 12 fois sans frais.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Comment réserver mes heures de conduite ?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Connectez-vous à votre espace élève et utilisez notre calendrier interactif pour choisir vos créneaux avec le moniteur de votre choix.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">Contactez-Nous</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Adresse</h4>
+                            <p>123 Avenue de la République<br>75011 Paris</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Téléphone</h4>
+                            <p>01 23 45 67 89</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>contact@excellence-autoecole.fr</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <input type="text" placeholder="Nom complet" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="tel" placeholder="Téléphone" required>
+                    <textarea placeholder="Votre message" rows="5" required></textarea>
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Excellence Auto-École</h4>
+                    <p>Votre réussite est notre priorité</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Liens Rapides</h4>
+                    <ul>
+                        <li><a href="#formules">Nos formules</a></li>
+                        <li><a href="reservation.html">Réserver</a></li>
+                        <li><a href="espace-eleve.html">Espace élève</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Légal</h4>
+                    <ul>
+                        <li><a href="mentions-legales.html">Mentions légales</a></li>
+                        <li><a href="cgv.html">CGV</a></li>
+                        <li><a href="confidentialite.html">Confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Horaires</h4>
+                    <p>Lun - Ven: 9h - 19h<br>Samedi: 9h - 17h</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Excellence Auto-École. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>'''
+
+with open('auto-ecole-site/frontend/index.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("✓ index.html créé")
